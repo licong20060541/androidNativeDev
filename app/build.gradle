@@ -12,6 +12,7 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags "-frtti -fexceptions"
+                arguments "-DANDROID_ARM_NEON=TRUE"
             }
         }
     }
@@ -36,3 +37,16 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+// CMakeLists.txt 中主要定义了哪些文件需要编译，以及和其他库的关系等。
+// 由于 CMake 的命令集成在了 gradle - externalNativeBuild 中，所以在 gradle 中有2个地方配置 CMake。
+//
+// defaultConfig外面的 externalNativeBuild - cmake，指明了 CMakeList.txt 的路径；
+// defaultConfig 里面的 externalNativeBuild - cmake，主要填写 CMake 的命令参数。
+// 即由 arguments 中的参数最后转化成一个可执行的 CMake 的命令，
+// 可以在 .externalNativeBuild/cmake/debug/{abi}/cmake_build_command.txt 中查到
+// 详细参考 https://link.jianshu.com/?t=https://developer.android.com/ndk/guides/cmake.html
+
+// CMAKE 中文手册
+// https://link.jianshu.com/?t=https://www.zybuluo.com/khan-lau/note/254724
+

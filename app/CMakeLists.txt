@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+# 编译出一个动态库 native-lib，源文件只有 src/main/cpp/native-lib.cpp
 add_library( # Sets the name of the library.
              native-lib
 
@@ -25,6 +26,7 @@ add_library( # Sets the name of the library.
 # you want to add. CMake verifies that the library exists before
 # completing its build.
 
+# 找到预编译库 log_lib 并link到我们的动态库 native-lib中
 find_library( # Sets the name of the path variable.
               log-lib
 
