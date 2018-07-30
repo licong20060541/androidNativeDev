@@ -1,6 +1,11 @@
 # androidNativeDev
 native develop
 
+https://developer.android.com/training/articles/perf-jni#java
+JNI defines two key data structures, "JavaVM" and "JNIEnv"
+
+！！！写好native函数后，执行javah com.point.nativedev.MainActivity生成头文件
+
 1.
 安装三个重要tools：
 SDK Tools中：CMake，LLDB，NDK
@@ -73,3 +78,145 @@ https://link.jianshu.com/?t=http://blog.coderclock.com/2017/05/07/android/Androi
 当我们开发 Android 应用的时候，由于 Java 代码运行在虚拟机上，所以我们从来没有关心过这方面的问题。
 但是当我们开发或者使用原生代码时就需要了解不同 ABI 以及为自己的程序选择接入不同 ABI 的库。
 （库越多，包越大，所以要有选择）
+
+
+Q1：怎么指定 C++标准？
+
+A：在 build_gradle 中，配置 cppFlags -std
+
+externalNativeBuild {
+  cmake {
+    cppFlags "-frtti -fexceptions -std=c++14"
+    arguments '-DANDROID_STL=c++_shared'
+  }
+}
+
+
+Q2：add_library 如何编译一个目录中所有源文件？
+
+A： 使用 aux_source_directory 方法将路径列表全部放到一个变量中。
+
+# 查找所有源码 并拼接到路径列表
+aux_source_directory(${CMAKE_HOME_DIRECTORY}/src/api SRC_LIST)
+aux_source_directory(${CMAKE_HOME_DIRECTORY}/src/core CORE_SRC_LIST)
+list(APPEND SRC_LIST ${CORE_SRC_LIST})
+add_library(native-lib SHARED ${SRC_LIST})
+
+
+
+Q3：怎么调试 CMakeLists.txt 中的代码？
+
+A：使用 message 方法
+
+cmake_minimum_required(VERSION 3.4.1)
+message(STATUS "execute CMakeLists")
+...
+然后运行后在 .externalNativeBuild/cmake/debug/{abi}/cmake_build_output.txt 中查看 log。
+
+
+
+
+Q4：什么时候 CMakeLists.txt 里面会执行？
+
+A：测试了下，好像在 sync 的时候会执行。执行一次后会生成 makefile 的文件缓存之类的东西
+放在 externalNativeBuild 中。所以如果 CMakeLists.txt 中没有修改的话再次同步好像是不会重新执行的。
+（或者删除 .externalNativeBuild 目录）
+
+真正编译的时候好像只是读取.externalNativeBuild 目录中已经解析好的 makefile 去编译。
+不会再去执行 CMakeLists.txt
+
+
+
+######################################
+
+https://developer.android.com/studio/projects/add-native-code
+
+使用 add_library() 向您的 CMake 构建脚本添加源文件或库时，
+Android Studio 还会在您同步项目后在 Project 视图下显示关联的标头文件。
+不过，为了确保 CMake 可以在编译时定位您的标头文件，您需要将 include_directories() 命令
+添加到 CMake 构建脚本中并指定标头的路径：
+
+add_library(...)
+# Specifies a path to native header files.
+include_directories(src/main/cpp/include/)
+
+
+CMake 使用以下规范来为库文件命名：
+
+lib库名称.so
+
+如果您在 CMake 构建脚本中重命名或移除某个库，您需要先清理项目，Gradle 随后才会应用更改或者从 APK 中移除旧版本的库。
+要清理项目，请从菜单栏中选择 Build > Clean Project
+
+
+
+将 find_library() 命令添加到您的 CMake 构建脚本中以定位 NDK 库，并将其路径存储为一个变量。
+您可以使用此变量在构建脚本的其他部分引用 NDK 库。以下示例可以定位 Android
+特定的日志支持库并将其路径存储在 log-lib 中：
+
+find_library( # Defines the name of the path variable that stores the
+              # location of the NDK library.
+              log-lib
+
+              # Specifies the name of the NDK library that
+              # CMake needs to locate.
+              log )
+为了确保您的原生库可以在 log 库中调用函数，您需要使用 CMake 构建脚本中的 target_link_libraries() 命令关联库：
+
+find_library(...)
+
+# Links your native library against one or more other native libraries.
+target_link_libraries( # Specifies the target library.
+                       native-lib
+
+                       # Links the log library to the target library.
+                       ${log-lib} )
+
+NDK 还以源代码的形式包含一些库，您在构建和关联到您的原生库时需要使用这些代码。
+您可以使用 CMake 构建脚本中的 add_library() 命令，将源代码编译到原生库中。
+要提供本地 NDK 库的路径，您可以使用 ANDROID_NDK 路径变量，Android Studio 会自动为您定义此变量。
+
+以下命令可以指示 CMake 构建 android_native_app_glue.c，后者会将 NativeActivity 生命周期
+事件和触摸输入置于静态库中并将静态库关联到 native-lib：
+
+add_library( app-glue
+             STATIC
+             ${ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c )
+
+# You need to link static libraries against your shared native library.
+target_link_libraries( native-lib app-glue ${log-lib} )
+
+
+# 指定库的路径
+add_library( imported-lib
+             SHARED
+             IMPORTED )
+set_target_properties( # Specifies the target library.
+                       imported-lib
+
+                       # Specifies the parameter you want to define.
+                       PROPERTIES IMPORTED_LOCATION
+
+                       # Provides the path to the library you want to import.
+                       imported-lib/src/${ANDROID_ABI}/libimported-lib.so )
+
+
+android {
+  ...
+  defaultConfig {
+    ...
+    externalNativeBuild {
+      cmake {...}
+      // or ndkBuild {...}
+    }
+
+    ndk {
+      // Specifies the ABI configurations of your native
+      // libraries Gradle should build and package with your APK.
+      abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a',
+                   'arm64-v8a'
+    }
+  }
+  buildTypes {...}
+  externalNativeBuild {...}
+}

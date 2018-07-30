@@ -20,13 +20,16 @@ set_target_properties(lib_gperf PROPERTIES IMPORTED_LOCATION
 # build application's shared lib
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
+# 创建库 hello-libs
 add_library(hello-libs SHARED
             hello-libs.cpp)
 
+# 加入头文件
 target_include_directories(hello-libs PRIVATE
                            ${distribution_DIR}/gmath/include
                            ${distribution_DIR}/gperf/include)
 
+# hello-libs库链接上 lib_gmath 和 lib_gperf
 target_link_libraries(hello-libs
                       android
                       lib_gmath
