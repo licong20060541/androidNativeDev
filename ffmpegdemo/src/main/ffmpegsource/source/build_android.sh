@@ -50,42 +50,43 @@ make clean
 make -j4
 make install
 }
+
 # arm v7vfp
 CPU=armv7-a
 OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=vfp -marm -march=$CPU "
 PREFIX=./android/$CPU-vfp
 ADDITIONAL_CONFIGURE_FLAG=
 build_one
+
 # CPU=armv
 # PREFIX=$(pwd)/android/$CPU
 # ADDI_CFLAGS="-marm"
 # build_one
+
 #arm v6
 #CPU=armv6
 #OPTIMIZE_CFLAGS="-marm -march=$CPU"
 #PREFIX=./android/$CPU
 #ADDITIONAL_CONFIGURE_FLAG=
 #build_one
+
 #arm v7vfpv3
 # CPU=armv7-a
 # OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=vfpv3-d16 -marm -march=$CPU "
 # PREFIX=./android/$CPU
 # ADDITIONAL_CONFIGURE_FLAG=
 # build_one
+
 #arm v7n
 #CPU=armv7-a
 #OPTIMIZE_CFLAGS="-mfloat-abi=softfp -mfpu=neon -marm -march=$CPU -mtune=cortex-a8"
 #PREFIX=./android/$CPU
 #ADDITIONAL_CONFIGURE_FLAG=--enable-neon
 #build_one
+
 #arm v6+vfp
 #CPU=armv6
 #OPTIMIZE_CFLAGS="-DCMP_HAVE_VFP -mfloat-abi=softfp -mfpu=vfp -marm -march=$CPU"
 #PREFIX=./android/${CPU}_vfp
 #ADDITIONAL_CONFIGURE_FLAG=
 #build_one
-
-作者：zzyyppqq
-链接：https://www.jianshu.com/p/b53369d6905f
-來源：简书
-简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。

@@ -17,26 +17,15 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 public class VideoActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, MediaPlayer.OnCompletionListener {
 
-    @Bind(R.id.surfaceView)
     SurfaceView surfaceView;
-    @Bind(R.id.tv_cur_time)
     TextView tvCurTime;
-    @Bind(R.id.tv_total_time)
     TextView tvTotalTime;
-    @Bind(R.id.btn_play)
     Button btnPlay;
-    @Bind(R.id.btn_pause)
     Button btnPause;
-    @Bind(R.id.btn_stop)
     Button btnStop;
-    @Bind(R.id.btn_restart)
     Button btnRestart;
-    @Bind(R.id.seekbar)
     AppCompatSeekBar seekbar;
     private SurfaceHolder mHolder;
     private MediaPlayer mMediaPlayer;
@@ -55,7 +44,15 @@ public class VideoActivity extends AppCompatActivity implements SeekBar.OnSeekBa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-        ButterKnife.bind(this);
+//        ButterKnife.bind(this);
+        surfaceView = findViewById(R.id.surfaceView);
+        tvCurTime = findViewById(R.id.tv_cur_time);
+        tvTotalTime = findViewById(R.id.tv_total_time);
+        btnPlay = findViewById(R.id.btn_play);
+        btnPause = findViewById(R.id.btn_pause);
+        btnStop = findViewById(R.id.btn_stop);
+        btnRestart = findViewById(R.id.btn_restart);
+        seekbar = findViewById(R.id.seekbar);
 
         initData();
 

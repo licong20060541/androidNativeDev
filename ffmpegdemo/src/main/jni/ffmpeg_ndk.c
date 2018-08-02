@@ -8,7 +8,8 @@
 #include <android/native_window_jni.h>
 
 #include <android/log.h>
-#include "util.h"
+#include "utils.h"
+// #include "com_point_ffmpegdemo_FFmpegNdk.h"
 
 #define TAG "ffmpeg_android_tag"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,TAG ,__VA_ARGS__) // 定义LOGD类型
