@@ -1,1 +1,1 @@
-include ':app', ':solibrary', ':usesolib', ':ffmpegdemo'
+include ':app', ':solibrary', ':usesolib', ':ffmpegdemo', ':solibrarymk', ':usemkso'
