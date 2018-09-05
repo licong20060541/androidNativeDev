@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (Ljava/lang/String;)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_utils_CUtils_encode
-  (JNIEnv *, jobject, jstring);
+        (JNIEnv *, jobject, jstring);
 
 /*
  * Class:     com_utils_CUtils
@@ -21,7 +21,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_utils_CUtils_encode
  * Signature: ([B)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_com_utils_CUtils_decode
-  (JNIEnv *, jobject, jbyteArray);
+        (JNIEnv *, jobject, jbyteArray);
 
 #ifdef __cplusplus
 }
